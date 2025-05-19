@@ -67,7 +67,39 @@ const seo: SEOProps = {
     <!-- <link rel="icon" type="image/svg+xml" href="/favicon.svg" /> -->
     <link rel="icon" href={favicon} />
     
-
+    <script is:inline>
+      document.addEventListener("turbo:before-render", (event) => {
+        const newMain = event.detail.newBody.querySelector("#leluhur");
+        const oldMain = document.querySelector("#leluhur");
+    
+        if (!newMain || !oldMain) return;
+    
+        // Tambahkan animasi keluar ke konten lama
+        oldMain.classList.add("opacity-0", "translate-y-2", "transition-all", "duration-300", "ease-in");
+    
+        // Tahan rendering dulu
+        event.preventDefault();
+    
+        // Setelah animasi keluar selesai
+        setTimeout(() => {
+          // Tambahkan kelas animasi masuk ke konten baru
+          newMain.classList.add("opacity-0", "translate-y-4", "transition-all", "duration-300", "ease-out");
+          
+          // Resume render
+          event.detail.resume();
+    
+          // Setelah DOM di-update, trigger animasi masuk
+          requestAnimationFrame(() => {
+            requestAnimationFrame(() => {
+              newMain.classList.remove("opacity-0", "translate-y-4");
+            });
+          });
+        }, 300);
+      });
+    </script>
+    
+    
+    
     <script type="application/ld+json">
       {
         "@context": "https://schema.org",
@@ -119,7 +151,7 @@ const seo: SEOProps = {
         <span class="loader"></span>
       </div>
       <!-- Konten slot -->
-      <div id="leluhur" class="flex-col gap-3">
+      <div id="leluhur" class="flex-col gap-3 transition-all duration-300 ease-out">
         <slot />
       </div>
     </main>
@@ -225,3 +257,4 @@ document.addEventListener("turbo:load", initThemeToggle);
 
 
 </script>
+
