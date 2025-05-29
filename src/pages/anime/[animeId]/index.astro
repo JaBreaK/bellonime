@@ -101,19 +101,20 @@ const { data } = animeInfo;
               <WidgetTitle title="Detail Anime" />
               <AnimeDetails anime={data} />
 
-              {data.batchList.length > 0 && (
-                <>
-                  <WidgetTitle title="Download Batch" />
-                  {data.batchList.map((batch) => (
-                    <a
-                      href={generateUrlPath("/batch", batch.batchId)}
-                      class="line-clamp-2 flex gap-1 text-white bg-pink-700 hover:bg-pink-800 focus:outline-none focus:ring-4 focus:ring-pink-300 font-medium rounded-md text-sm px-5 py-2.5 text-center dark:bg-pink-600 dark:hover:bg-pink-700 dark:focus:ring-pink-800"
-                    >
-                      {batch.title}
-                    </a>
-                  ))}
-                </>
-              )}
+{data.batch && (
+  <>
+    <WidgetTitle title="Download Batch" />
+    <a
+      href={generateUrlPath("/batch", data.batch.batchId)}
+      class="line-clamp-2 flex gap-1 text-white bg-pink-700 hover:bg-pink-800 focus:outline-none focus:ring-4 focus:ring-pink-300 font-medium rounded-md text-sm px-5 py-2.5 text-center dark:bg-pink-600 dark:hover:bg-pink-700 dark:focus:ring-pink-800"
+      rel="noopener"
+    >
+      {data.batch.title.replace(/otakudesu/gi, "").trim()}
+    </a>
+  </>
+)}
+
+
 
               {data.trailer && (
                 <iframe

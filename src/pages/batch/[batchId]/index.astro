@@ -10,7 +10,7 @@ import batchInfoService from "@services/batchInfoService";
 import generateUrlPath from "@utils/generateUrlPath";
 import StarIcon from "@components/icons/StarIcon.astro";
 import AnimeDetails from "@components/AnimeDetails.astro";
-import DownloadLink from "@components/DownloadLink.astro";
+import DownloadLink from "@components/DownloadLinkBatch.astro";
 import Error from "@components/Error.astro";
 
 const {
@@ -84,7 +84,7 @@ const { data } = batchInfo;
                 </div>
               </div>
 
-              <div class="flex flex-col gap-4">
+              {/* <div class="flex flex-col gap-4">
                 {data.synopsis.paragraphs.map((paragraph) => (
                   <p class="text-zinc-600 dark:text-zinc-400">{paragraph}</p>
                 ))}
@@ -98,7 +98,7 @@ const { data } = batchInfo;
                     </a>
                   ))}
                 </div>
-              </div>
+              </div> */}
 
               <WidgetTitle title="Detail Anime" />
               <AnimeDetails anime={data} />

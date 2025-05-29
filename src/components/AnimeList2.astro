@@ -32,24 +32,24 @@ const {
               src={anime.poster}
               alt={anime.title}
             />
-            <span class="anime2-item-type">{anime.type}</span>
+            <span class="anime2-item-type">{anime.episodes}</span>
             <span class="anime2-item-score">
               <StarIcon class="w-[12px] h-[12px]" />
               <span>{anime.score}</span>
             </span>
-            <span class="anime2-item-status">{anime.status}</span>
+            <span class="anime2-item-status">{anime.lastReleaseDate}</span>
           </div>
           <div class="p-2">
             <h3 class="anime2-item-title">{anime.title}</h3>
           </div>
         </a>
-        <div class="hidden">
+        {/* <div class="hidden">
           {anime.genreList.map((genre) => (
             <a href={generateUrlPath("/genres", genre.genreId)}>
               {genre.title}
             </a>
           ))}
-        </div>
+        </div> */}
       </>
     ))
   }

@@ -15,12 +15,12 @@ const {
   bellonime: { siteName },
 } = animeConfig;
 const page = Astro.url.searchParams.get("page");
-const batch = await batchService({ page });
+const completed = await batchService({ page });
 ---
 
 {
   () => {
-    if (batch.ok) {
+    if (completed.ok) {
       const title = `Batch | Download Batch Anime - ${siteName}`;
 
       return (
@@ -36,11 +36,11 @@ const batch = await batchService({ page });
               <WidgetTitle title="Download Batch Anime" />
               <AnimeList2
                 anime={{
-                  list: batch.data.batchList,
+                  list: completed.data.animeList,
                   baseUrlPath: "/batch",
                 }}
               />
-              <Pagination pagination={batch.pagination} />
+              <Pagination pagination={completed.pagination} />
             </Content>
             <Sidebar>
               <WidgetTitle title="Sidebar" />
@@ -52,8 +52,8 @@ const batch = await batchService({ page });
 
     return (
       <Error
-        statusCode={batch.statusCode}
-        message={batch.message || batch.statusMessage}
+        statusCode={completed.statusCode}
+        message={completed.message || completed.statusMessage}
       />
     );
   }

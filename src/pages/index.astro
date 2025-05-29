@@ -14,11 +14,13 @@ import AnimeList3 from "@components/AnimeList3.astro";
 import Error from "@components/Error.astro";
 import movieService from "@services/movieService";
 import batchService from "@services/batchService";
+import completedService from "@services/completedService";
 
 const {
   bellonime: { siteName, description, image },
 } = animeConfig;
 const home = await homeService();
+const completed = await completedService({  });
 const batch = await batchService({  });
 const movie = await movieService({  });
 
@@ -50,7 +52,7 @@ const movie = await movieService({  });
           <Carousel
           
             anime={{
-              list: home.data.recent.animeList.slice(0, 5),
+              list: home.data.ongoing.animeList.slice(0, 10),
               baseUrlPath: "/anime",
               
             }}
@@ -58,29 +60,29 @@ const movie = await movieService({  });
           <Breadcrumb />
           <Sesepuh>
             <Content>
-              <WidgetTitle title="Episode Terbaru" href="/recent" />
+              <WidgetTitle title="Episode Terbaru" href="/ongoing" />
               <AnimeList1
                 anime={{
-                  list: home.data.recent.animeList,
+                  list: home.data.ongoing.animeList,
                   baseUrlPath: "/anime",
                 }}
               />
-              <WidgetTitle title="Download Batch Anime" href="/batch" />
+              <WidgetTitle title="Download Batch Anime" href="/completed" />
               <AnimeList2
                 anime={{
-                  list: batch.data.batchList,
-                  baseUrlPath: "/batch",
+                  list: completed.data.animeList,
+                  baseUrlPath: "/anime",
                 }}
               />
             </Content>
             <Sidebar>
               <WidgetTitle title="Anime Movie" href="/movies" />
-              <AnimeList3
+              {/* <AnimeList3
                 anime={{
                   list: movie.data.animeList,
                   baseUrlPath: "/anime",
                 }}
-              />
+              /> */}
             </Sidebar>
           </Sesepuh>
         </Layout>

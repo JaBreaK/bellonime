@@ -26,7 +26,7 @@ const animeConfig: AnimeConfig = {
 
   bellonimeApi: {
     apiUrl: API_URL,
-    baseUrlPath: "/samehadaku",
+    baseUrlPath: "/otakudesu",
   },
 };
 

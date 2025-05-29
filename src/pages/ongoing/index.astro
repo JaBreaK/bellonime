@@ -7,7 +7,7 @@ import Content from "@components/Content.astro";
 import Sidebar from "@components/Sidebar.astro";
 import animeConfig from "@configs/animeConfig";
 import ongoingService from "@services/ongoingService";
-import AnimeList2 from "@components/AnimeList2.astro";
+import AnimeList1 from "@components/AnimeList1.astro";
 import Pagination from "@components/Pagination.astro";
 import Error from "@components/Error.astro";
 
@@ -34,7 +34,7 @@ const ongoing = await ongoingService({ page });
           <Sesepuh>
             <Content>
               <WidgetTitle title="Anime Sedang Tayang" />
-              <AnimeList2
+              <AnimeList1
                 anime={{
                   list: ongoing.data.animeList,
                   baseUrlPath: "/anime",
