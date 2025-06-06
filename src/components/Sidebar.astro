@@ -1,5 +1,26 @@
+---
+// src/components/ChatSidebar.astro
+// Variabel serverId: ganti dengan Server ID Discord Anda
+const serverId = "1025303989870395422"; 
+const widgetTheme = "dark"; // atau "light"
+---
+
 <aside
-  class="flex flex-col border border-zinc-300 dark:border-zinc-800 bg-white dark:bg-zinc-900 gap-4 rounded-lg p-3 md:flex-1"
+  class="flex flex-col border border-zinc-300 dark:border-zinc-800 bg-white dark:bg-zinc-900 rounded-lg p-3 md:flex-1 h-full"
 >
-  <slot />
+  <header class="mb-2">
+    <h2 class="text-lg font-semibold text-zinc-800 dark:text-zinc-200">
+      Forum Chat
+    </h2>
+  </header>
+
+  <div class="flex-1 overflow-hidden rounded-md">
+    <!-- 
+      Discord widget: 
+      - ganti SERVER_ID di URL dengan Server ID Anda 
+      - theme=dark atau light 
+      - width/height: sesuaikan ukuran sidebar Anda 
+    -->
+    <iframe src="https://discordapp.com/widget?id=1025303989870395422&theme=dark" width="350" height="500" allowtransparency="true" frameborder="0" sandbox="allow-popups allow-popups-to-escape-sandbox allow-same-origin allow-scripts"></iframe>
+  </div>
 </aside>

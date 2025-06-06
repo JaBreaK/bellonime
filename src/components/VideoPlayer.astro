@@ -9,105 +9,137 @@ interface Props {
 const { anime } = Astro.props;
 ---
 
-<select
-  id="servers"
-  class="bg-zinc-50 border border-zinc-300 text-zinc-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-zinc-700 dark:border-zinc-600 dark:placeholder-zinc-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
->
-  <option selected value={anime.defaultStreamingUrl} id="default-server"
-    >Server Bawaan</option
+<div class="space-y-4">
+  <!-- SELECT SERVER -->
+  <label for="server-select" class="block text-sm font-medium text-zinc-700 dark:text-zinc-300">
+    Pilih Server
+  </label>
+  <select
+    id="server-select"
+    class="bg-zinc-50 border border-zinc-300 text-zinc-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-zinc-700 dark:border-zinc-600 dark:placeholder-zinc-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
   >
-  {
-    anime.server.qualities.map((quality) => {
+    <!-- Option default -->
+    <option value={anime.defaultStreamingUrl} selected>
+      Pilih Kualitas disini
+    </option>
+
+    <!-- Loop kualitas & serverList -->
+    {anime.server.qualities.map((quality) => {
       if (quality.serverList && quality.serverList.length > 0) {
         return (
-          <>
-            <option disabled>{quality.title}</option>
-            {quality.serverList?.map((server) => (
-              <option value={server.serverId}>{server.title}</option>
+          <optgroup label={quality.title} key={quality.title}>
+            {quality.serverList.map((server) => (
+              <option value={server.serverId} key={server.serverId}>
+                {server.title}
+              </option>
             ))}
-          </>
+          </optgroup>
         );
       }
-    })
-  }
-</select>
-<div
-  id="video-player-wrapper"
-  class="flex justify-center items-center aspect-video bg-zinc-300 dark:bg-zinc-700 rounded-lg overflow-hidden"
->
-  {
-    anime.defaultStreamingUrl.toLowerCase() === "no iframe found" ? (
-      <h5 class="text-lg font-extrabold">Server Tidak Tersedia</h5>
+      return null;
+    })}
+  </select>
+
+  <!-- VIDEO / IFRAME WRAPPER -->
+  <div
+    id="video-container"
+    class="relative flex justify-center items-center aspect-video bg-zinc-300 dark:bg-zinc-700 rounded-lg overflow-hidden"
+  >
+    <!-- Konten awal: cek defaultStreamingUrl -->
+    {anime.defaultStreamingUrl.toLowerCase() === "no iframe found" ? (
+      <h5 class="text-lg font-extrabold text-zinc-800 dark:text-zinc-200">
+        Server Tidak Tersedia
+      </h5>
     ) : anime.defaultStreamingUrl.endsWith(".mp4") ? (
       <video
-        id="video-player-video"
+        id="video-player"
         class="w-full h-full"
         controls
         src={anime.defaultStreamingUrl}
       />
     ) : (
       <iframe
-        id="video-player-iframe"
+        id="video-player"
+        class="w-full h-full"
         src={anime.defaultStreamingUrl}
         allowfullscreen
-        class="w-full h-full"
       />
-    )
-  }
+    )}
+  </div>
 </div>
 
-<script>
-  // LOGIC PEMILIH SERVER
-  const selectEl = document.getElementById("servers") as HTMLSelectElement;
-  const defaultServerEl = document.getElementById(
-    "default-server"
-  ) as HTMLOptionElement;
-  const videoPlayerWrapper = document.getElementById(
-    "video-player-wrapper"
-  ) as HTMLDivElement;
+<!-- SCRIPT CLIENT-SIDE -->
+<script is:client>
+  // Ambil elemen
+  const selectEl = document.getElementById("server-select");
+  const videoContainer = document.getElementById("video-container");
 
-  function cuss(src: string) {
+  // Fungsi untuk membuat spinner loading
+  function showSpinner() {
+    videoContainer.innerHTML = `
+      <div class="flex items-center justify-center w-full h-full">
+        <div class="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-blue-500"></div>
+      </div>
+    `;
+  }
+
+  // Fungsi render video/iframe berdasarkan URL
+  function renderPlayer(src) {
+    if (!src || src.toLowerCase() === "no iframe found") {
+      videoContainer.innerHTML = `
+        <h5 class="text-lg font-extrabold text-zinc-800 dark:text-zinc-200">
+          Server Tidak Tersedia
+        </h5>
+      `;
+      return;
+    }
+
+    // Kalau .mp4 → video; selain itu → iframe
     if (src.endsWith(".mp4")) {
-      videoPlayerWrapper.innerHTML = `
+      videoContainer.innerHTML = `
         <video
-          id="video-player-video"
+          id="video-player"
           class="w-full h-full"
           controls
-          src=${src}
-        />
+          src="${src}"
+        ></video>
       `;
     } else {
-      videoPlayerWrapper.innerHTML = `
+      videoContainer.innerHTML = `
         <iframe
-          id="video-player-iframe"
+          id="video-player"
           class="w-full h-full"
+          src="${src}"
           allowfullscreen
-          src=${src}
-        />
+        ></iframe>
       `;
     }
   }
 
-  selectEl.addEventListener("change", async function () {
-    videoPlayerWrapper.innerHTML = `
-      <span id="video-player-spinner" class="loader" />
-    `;
+  // Event listener perubahan server
+  selectEl.addEventListener("change", async (evt) => {
+    const selectedValue = evt.target.value;
 
-    if (this.value === defaultServerEl.value) {
-      cuss(this.value);
-    } else {
-      try {
-        const response = await fetch(`/api/server/${this.value}`, {
-          method: "POST",
-        });
-        const data = await response.json();
+    // Jika pilih server bawaan (url langsung)
+    if (selectedValue === selectEl.options[0].value) {
+      renderPlayer(selectedValue);
+      return;
+    }
 
-        cuss(data?.url || defaultServerEl.value);
-      } catch (error) {
-        videoPlayerWrapper.innerHTML = `
-          <h5 class="text-lg font-extrabold">Server Tidak Tersedia</h5>
-        `;
-      }
+    // Tampilkan spinner
+    showSpinner();
+
+    try {
+      // Fetch endpoint /api/server/:serverId
+      const res = await fetch(`/api/server/${selectedValue}`, {
+        method: "POST",
+      });
+      const data = await res.json();
+      const newUrl = data?.url || selectEl.options[0].value; // fallback ke default
+
+      renderPlayer(newUrl);
+    } catch (err) {
+      renderPlayer(null);
     }
   });
 </script>

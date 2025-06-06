@@ -1,4 +1,5 @@
 ---
+// src/components/Breadcrumb.astro
 import convertIdToTitle from "@utils/convertIdToTitle";
 
 interface Props {
@@ -16,7 +17,6 @@ Astro.url.pathname.split("/").forEach((item) => {
   if (typeof item === "string" && item) {
     const title = convertIdToTitle(item);
     const href = `/${item}`;
-
     pages.push({ title, href });
   }
 });
@@ -25,7 +25,6 @@ if (currentPage) {
   if (currentPage.action == "replace") {
     pages.pop();
   }
-
   pages.push({
     title: currentPage.title,
     href: currentPage.href,
@@ -40,7 +39,11 @@ if (currentPage) {
   <ol
     class="inline-flex items-center space-x-1 md:space-x-2 rtl:space-x-reverse"
   >
-    <li class="inline-flex items-center">
+    <!-- Item “Home” -->
+    <li
+      class="inline-flex items-center opacity-0"
+      data-index="0"
+    >
       <a
         href={Astro.url.origin}
         class="inline-flex items-center text-sm font-medium hover:text-pink-600"
@@ -59,66 +62,111 @@ if (currentPage) {
         Home
       </a>
     </li>
-    {
-      pages.map((page, index) => {
-        if (index === pages.length - 1) {
-          return (
-            <li aria-current="page">
-              <div class="flex items-center">
-                <svg
-                  class="rtl:rotate-180 w-3 h-3 mx-1 text-zinc-400"
-                  aria-hidden="true"
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 6 10"
-                >
-                  <path
-                    stroke="currentColor"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="m1 9 4-4-4-4"
-                  />
-                </svg>
-                <span
-                  data-href={page.href}
-                  class="ms-1 text-sm font-medium text-zinc-500 md:ms-2 line-clamp-1"
-                >
-                  {page.title}
-                </span>
-              </div>
-            </li>
-          );
-        }
 
+    {pages.map((page, index) => {
+      const delayIndex = index + 1; 
+      if (index === pages.length - 1) {
         return (
-          <li>
-            <div class="flex items-center">
-              <svg
-                class="rtl:rotate-180 block w-3 h-3 mx-1 text-zinc-400"
-                aria-hidden="true"
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 6 10"
-              >
-                <path
-                  stroke="currentColor"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="m1 9 4-4-4-4"
-                />
-              </svg>
-              <a
-                href={page.href}
-                class="ms-1 text-sm font-medium hover:text-pink-600 md:ms-2"
-              >
-                {page.title}
-              </a>
-            </div>
+          <li
+            aria-current="page"
+            class="flex items-center opacity-0"
+            data-index={delayIndex.toString()}
+          >
+            <svg
+              class="rtl:rotate-180 w-3 h-3 mx-1 text-zinc-400"
+              aria-hidden="true"
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 6 10"
+            >
+              <path
+                stroke="currentColor"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="m1 9 4-4-4-4"
+              />
+            </svg>
+            <span
+              data-href={page.href}
+              class="ms-1 text-sm font-medium text-zinc-500 md:ms-2 line-clamp-1"
+            >
+              {page.title}
+            </span>
           </li>
         );
-      })
-    }
+      }
+
+      return (
+        <li
+          class="flex items-center opacity-0"
+          data-index={delayIndex.toString()}
+        >
+          <svg
+            class="rtl:rotate-180 block w-3 h-3 mx-1 text-zinc-400"
+            aria-hidden="true"
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 6 10"
+          >
+            <path
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="m1 9 4-4-4-4"
+            />
+          </svg>
+          <a
+            href={page.href}
+            class="ms-1 text-sm font-medium hover:text-pink-600 md:ms-2"
+          >
+            {page.title}
+          </a>
+        </li>
+      );
+    })}
   </ol>
 </header>
+
+<!-- Animasi CSS-nya -->
+<style lang="css">
+  @keyframes slideIn {
+    from {
+      opacity: 0;
+      transform: translateX(-20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+
+  .slide-in {
+    animation: slideIn 0.3s ease-out forwards;
+  }
+</style>
+
+<!-- Script: pakai turbo:load dan fungsi toggleAnimasibread -->
+<script type="module" client:load>
+  function toggleAnimasibread() {
+    const items = document.querySelectorAll('li[data-index]');
+    items.forEach((el) => {
+      const idx = parseInt(el.getAttribute("data-index") || "0", 10);
+      const delay = idx * 100;
+      // Reset dulu: buang class slide-in, set ulang opacity-0
+      el.classList.remove("slide-in");
+      el.style.opacity = "0";
+      setTimeout(() => {
+        el.classList.add("slide-in");
+        // biarkan CSS animasi yang mengubah opacity-nya
+      }, delay);
+    });
+  }
+
+  // Pastikan animasi juga berjalan saat Turbo selesai load halaman
+  document.addEventListener("turbo:load", toggleAnimasibread);
+
+  // Kalau mau juga jalan sekali di awal (fallback), panggil langsung:
+  toggleAnimasibread();
+</script>

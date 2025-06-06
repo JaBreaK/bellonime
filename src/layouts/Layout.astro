@@ -31,6 +31,7 @@ const seo: SEOProps = {
 <html lang="id-ID">
   <head>
     <!-- di dalam <head> atau sebelum </body> -->
+     <script type="module" src="/src/scripts/scroll-animate.js"></script>
 
 <script type="module" src="https://cdn.jsdelivr.net/npm/@hotwired/turbo@7.3.0/dist/turbo.es2017-esm.js"></script>
 
@@ -104,9 +105,9 @@ const seo: SEOProps = {
       {
         "@context": "https://schema.org",
         "@type": "Organization",
-        "url": "https://bellonime.web.id",
+        "url": "https://www.bellonime.web.id",
         "name": "Bellonime",
-        "logo": "https://bellonime.web.id/images/logo.png"
+        "logo": "https://www.bellonime.web.id/images/logo.png"
       }
     </script>
         
@@ -147,9 +148,6 @@ const seo: SEOProps = {
     <!-- Konten utama yang akan di-swap oleh Turbo Drive -->
     <main id="main" class="container min-h-screen relative">
       <!-- Loading spinner saat fetch -->
-      <div id="spinner-wrapper" class="top-0 right-8 pt-[90px] fixed flex justify-center items-center hidden">
-        <span class="loader"></span>
-      </div>
       <!-- Konten slot -->
       <div id="leluhur" class="flex-col gap-3 transition-all duration-300 ease-out">
         <slot />

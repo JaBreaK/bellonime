@@ -13,20 +13,40 @@ const {
 } = Astro.props;
 ---
 
-<div class={`py-3 gap-4 grid xs:grid-cols-2 sm:grid-cols-3 md:grid-cols-4`}>
-  {
-    list.map((anime) => (
+<!-- Wrapper Utama -->
+<div>
+  <!-- 1) SKELETON PLACEHOLDER: Grid kotak abu-abu berkedip -->
+  <div
+    id="skeleton-grid"
+    class="py-3 gap-4 grid xs:grid-cols-2 sm:grid-cols-3 md:grid-cols-5"
+  >
+    {Array.from({ length: 5 }).map((_, i) => (
+      <div
+        key={i}
+        class="h-64 bg-gray-200 rounded-lg animate-pulse"
+      />
+    ))}
+  </div>
+
+  <!-- 2) GRID ANIME: Awalnya tersembunyi dengan 'hidden' -->
+  <div
+    id="anime-grid"
+    class="hidden py-3 gap-4 grid xs:grid-cols-2 sm:grid-cols-3 md:grid-cols-5"
+  >
+    {list.map((anime, idx) => (
       <a
+        key={anime.animeId || anime.batchId || idx}
         href={generateUrlPath(
           baseUrlPath,
           anime.animeId || anime.batchId || ""
         )}
-        class="group relative"
+        class="anime-item group relative opacity-0 translate-y-4 
+               transform transition-opacity transition-transform duration-500"
       >
-        <div class="relative overflow-hidden rounded-lg">
+        <div class="relative overflow-hidden rounded-lg h-64 bg-gray-100">
           <img
             loading="lazy"
-            class="anime2-item-img"
+            class="anime2-item-img w-full h-full object-cover"
             src={anime.poster}
             alt={anime.title}
           />
@@ -37,6 +57,35 @@ const {
           <h3 class="anime1-item-title">{anime.title}</h3>
         </div>
       </a>
-    ))
-  }
+    ))}
+  </div>
 </div>
+
+<!-- 3) Script sederhana dengan event "turbo:load" -->
+<script is:inline>
+  function toggleAnimasi() {
+    const skeleton = document.getElementById("skeleton-grid");
+    const grid     = document.getElementById("anime-grid");
+
+    // Simulasi “loading data” selama 1 detik
+    setTimeout(() => {
+      // (1) Sembunyikan skeleton
+      if (skeleton) skeleton.style.display = "none";
+
+      // (2) Tampilkan grid anime
+      if (grid) grid.classList.remove("hidden");
+
+      // (3) Munculkan tiap item dengan delay berurutan (staggered)
+      const items = grid.querySelectorAll(".anime-item");
+      items.forEach((el, idx) => {
+        setTimeout(() => {
+          el.classList.add("opacity-100");
+          el.classList.remove("translate-y-4");
+        }, idx * 100);
+      });
+    }, 1000);
+  }
+
+  // Daftarkan listener pada turbo:load
+  document.addEventListener("turbo:load", toggleAnimasi);
+</script>
