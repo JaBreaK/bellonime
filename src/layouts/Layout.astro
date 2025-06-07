@@ -31,7 +31,8 @@ const seo: SEOProps = {
 <html lang="id-ID">
   <head>
     <!-- di dalam <head> atau sebelum </body> -->
-     <script type="module" src="/src/scripts/scroll-animate.js"></script>
+     <script is:inline type="module" src="/src/scripts/scroll-animate.js"></script>
+     <script is:inline type="module" src="/src/scripts/animasi.js"></script>
 
 <script type="module" src="https://cdn.jsdelivr.net/npm/@hotwired/turbo@7.3.0/dist/turbo.es2017-esm.js"></script>
 
@@ -68,36 +69,7 @@ const seo: SEOProps = {
     <!-- <link rel="icon" type="image/svg+xml" href="/favicon.svg" /> -->
     <link rel="icon" href={favicon} />
     
-    <script is:inline>
-      document.addEventListener("turbo:before-render", (event) => {
-        const newMain = event.detail.newBody.querySelector("#leluhur");
-        const oldMain = document.querySelector("#leluhur");
-    
-        if (!newMain || !oldMain) return;
-    
-        // Tambahkan animasi keluar ke konten lama
-        oldMain.classList.add("opacity-0", "translate-y-2", "transition-all", "duration-300", "ease-in");
-    
-        // Tahan rendering dulu
-        event.preventDefault();
-    
-        // Setelah animasi keluar selesai
-        setTimeout(() => {
-          // Tambahkan kelas animasi masuk ke konten baru
-          newMain.classList.add("opacity-0", "translate-y-4", "transition-all", "duration-300", "ease-out");
-          
-          // Resume render
-          event.detail.resume();
-    
-          // Setelah DOM di-update, trigger animasi masuk
-          requestAnimationFrame(() => {
-            requestAnimationFrame(() => {
-              newMain.classList.remove("opacity-0", "translate-y-4");
-            });
-          });
-        }, 100);
-      });
-    </script>
+
     
     
     
@@ -149,7 +121,7 @@ const seo: SEOProps = {
     <main id="main" class="container min-h-screen relative">
       <!-- Loading spinner saat fetch -->
       <!-- Konten slot -->
-      <div id="leluhur" class="flex-col gap-3 transition-all duration-300 ease-out">
+      <div id="leluhur" class="flex-col gap-3 transition-all duration-1000 ease-out">
         <slot />
       </div>
     </main>

@@ -28,21 +28,21 @@ const {
             <img
               loading="lazy"
               src={anime.poster}
-              class="carousel-item-image"
+              class="carousel-item-image slide-in-top"
               alt={anime.title}
             />
           </div>
-          <div class="carousel-item-layer">
+          <div class=" carousel-item-layer">
             <div class="carousel-item-cus">
-              <p class="carousel-item-eps">
+              <p class="carousel-item-eps slide-in-left delay-1">
                 <span class="text-teal-600">Episode {anime.episodes}</span>
               </p>
-              <h1 class="carousel-item-title">
+              <h1 class="carousel-item-title slide-in-left delay-2">
                 {anime.title.replace(`Episode ${anime.episodes}`, "").trim()}
               </h1>
               <a
                 href={generateUrlPath(baseUrlPath, anime.animeId || "")}
-                class="carousel-item-btn"
+                class="carousel-item-btn slide-in-left delay-3"
               >
                 <PlayIcon />
                 <span class="text-xs">Tonton Kuy</span>
@@ -54,7 +54,7 @@ const {
     }
   </div>
   <div
-    class="absolute z-30 flex md:gap-10 -translate-x-1/2 space-x-3 rtl:space-x-reverse bottom-5 left-1/2"
+    class="slide-in-right absolute z-30 flex md:gap-10 -translate-x-1/2 space-x-3 rtl:space-x-reverse bottom-5 left-1/2"
   >
     <button
       type="button"

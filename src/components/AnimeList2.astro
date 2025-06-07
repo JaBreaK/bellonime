@@ -14,7 +14,23 @@ const {
 } = Astro.props;
 ---
 
-<div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+<div>
+  <!-- 1) SKELETON PLACEHOLDER: Grid kotak abu-abu berkedip -->
+  <div
+    id="skeleton-grid2"
+    class="py-3 gap-4 grid xs:grid-cols-2 sm:grid-cols-3 md:grid-cols-5"
+  >
+    {Array.from({ length: 5 }).map((_, i) => (
+      <div
+        key={i}
+        class="h-64 bg-gray-200 rounded-lg animate-pulse"
+      />
+    ))}
+  </div>
+
+<div 
+id="anime-grid2"
+class="hidden py-3 gap-4 grid xs:grid-cols-2 sm:grid-cols-3 md:grid-cols-5">
   {
     list.map((anime) => (
       <>
@@ -23,7 +39,8 @@ const {
             baseUrlPath,
             anime.animeId || anime.batchId || ""
           )}
-          class="group rounded-lg relative"
+          class="anime-item2 group rounded-lg relative opacity-0 translate-y-4 
+               transform transition-opacity transition-transform duration-500"
         >
           <div class="relative">
             <img
@@ -54,3 +71,31 @@ const {
     ))
   }
 </div>
+
+<script is:inline>
+  function toggleAnimasibatch() {
+    const skeleton = document.getElementById("skeleton-grid2");
+    const grid     = document.getElementById("anime-grid2");
+
+    // Simulasi “loading data” selama 1 detik
+    setTimeout(() => {
+      // (1) Sembunyikan skeleton
+      if (skeleton) skeleton.style.display = "none";
+
+      // (2) Tampilkan grid anime
+      if (grid) grid.classList.remove("hidden");
+
+      // (3) Munculkan tiap item dengan delay berurutan (staggered)
+      const items = grid.querySelectorAll(".anime-item2");
+      items.forEach((el, idx) => {
+        setTimeout(() => {
+          el.classList.add("opacity-100");
+          el.classList.remove("translate-y-4");
+        }, idx * 100);
+      });
+    }, 1000);
+  }
+
+  // Daftarkan listener pada turbo:load
+  document.addEventListener("turbo:load", toggleAnimasibatch);
+</script>

@@ -4,8 +4,6 @@ import SearchIcon from "./icons/SearchIcon.astro";
 import MoonIcon from "./icons/MoonIcon.astro";
 import SunIcon from "./icons/SunIcon.astro";
 
-
-
 interface Props {
   navLinks: {
     title: string;
@@ -21,137 +19,116 @@ const { navLinks } = Astro.props;
 let activeLink = Astro.url.pathname;
 ---
 
-<nav
-  id="navbar"
-  class="fixed w-full z-50 top-0 flex justify-between items-center px-4 py-2 space-x-4"
->
-  <!-- Bagian Kiri -->
-  <div
-    class="rounded-full bg-zinc-100 dark:bg-zinc-800 p-2 shadow-md flex items-center space-x-2 rtl:space-x-reverse"
-  >
-    <a href={Astro.url.origin} class="flex items-center space-x-2 rtl:space-x-reverse">
-      <img src={logo} class="w-6" />
-      <h1 class="text-lg font-semibold whitespace-nowrap dark:text-white hidden sm:block">
-        {siteName}
-      </h1>
+<!-- Outer wrapper: fixed full-width with backdrop blur and shadow -->
+<div class="fixed inset-x-0 top-0 z-50 backdrop-blur-md bg-white/60 dark:bg-zinc-900/60 shadow-md transition-colors duration-500">
+  <nav id="navbar" class="container mx-auto flex justify-between items-center px-6 py-3">
+    <!-- LEFT: Logo -->
+    <a href={Astro.url.origin} class="flex items-center space-x-3 transition-transform duration-300 hover:scale-105">
+      <img src={logo} class="w-8 h-auto" alt="Logo" />
+      <span class="text-xl font-bold dark:text-white hidden sm:inline-block">{siteName}</span>
     </a>
-  </div>
 
-  <!-- Bagian Tengah -->
-  <div
-    class="rounded-full bg-zinc-100 dark:bg-zinc-800 p-2 shadow-md flex justify-center"
-  >
-    <ul class="flex space-x-2 rtl:space-x-reverse">
+    <!-- CENTER: Navigation Links with sliding underline -->
+    <ul class="flex space-x-6">
       {navLinks.map((link) => {
         const isActive = link.href === activeLink;
         return (
-          <li>
+          <li key={link.href} class="relative">
             <a
-            
               href={link.href}
-              class={`navbar-link-item ${isActive ? 'active' : ''} ${isActive ? 'transitioning' : ''}`}
+              class={`flex items-center p-2 rounded-full transition-colors duration-300 hover:bg-zinc-200 dark:hover:bg-zinc-800 ${isActive ? 'text-pink-600 dark:text-pink-400' : 'text-zinc-700 dark:text-zinc-300'}`}
+              aria-label={link.title}
             >
-              <link.icon class="w-6 h-6"/>
+              <link.icon class="w-6 h-6" />
             </a>
+            {/* Sliding underline */}
+            <span
+              class={`absolute bottom-0 left-1/2 h-0.5 w-0 bg-pink-600 dark:bg-pink-400 transition-all duration-300 ${isActive ? 'opacity-100 w-1/2 -translate-x-1/2' : 'opacity-0 w-0'}`}
+            ></span>
           </li>
         );
       })}
     </ul>
-  </div>
 
-  <!-- Bagian Kanan -->
-  <div
-    class="rounded-full bg-zinc-100 dark:bg-zinc-800 p-2 shadow-md flex items-center space-x-2 rtl:space-x-reverse"
-  >
-    <button
-      id="navbar-button-search-main"
-      data-dropdown-toggle="dropdownSearch"
-      data-dropdown-placement="bottom-end"
-      type="button"
-      class="inline-flex items-center p-1 w-8 h-8 justify-center text-sm text-zinc-700 rounded-full hover:bg-zinc-200 dark:text-zinc-200 dark:hover:bg-zinc-700"
-    >
-      <SearchIcon class="w-4 h-4" />
-    </button>
-    <div id="dropdownSearch" class="z-10 hidden w-full">
-      <ul
-        class="p-2 text-sm   -translate-y-2"
-      >
-        <form
-          id="navbar-form-search"
-          class="max-w-md mx-auto text-zinc-700 dark:text-zinc-200"
+    <!-- RIGHT: Search & Theme Toggle -->
+    <div class="flex items-center space-x-4">
+      <!-- Search -->
+      <div class="relative">
+        <button
+          id="navbar-button-search-main"
+          data-dropdown-toggle="dropdownSearch"
+          class="p-2 rounded-full hover:bg-zinc-200 dark:hover:bg-zinc-700 transition-transform duration-200 transform hover:scale-110"
+          aria-label="Search"
         >
-          <div class="flex">
-            <div class="relative w-full">
-              <input
-                type="search"
-                id="navbar-input-search"
-                class=" p-2 w-full z-20 text-sm  bg-zinc-50 rounded-lg border border-zinc-300 focus:ring-pink-500 focus:border-pink-500 dark:bg-zinc-800  dark:placeholder-zinc-400 dark:text-white dark:focus:border-pink-500"
-                placeholder="Cari Anime.."
-                required
-              />
-              <button
-                type="submit"
-                class="absolute top-0 end-0 h-full p-2 text-sm font-medium text-white bg-pink-600 rounded-e-lg border border-pink-600 hover:bg-pink-700 focus:ring-4 focus:outline-none focus:ring-pink-300 dark:bg-pink-500 dark:hover:bg-pink-600 dark:focus:ring-pink-700"
-              >
-                <SearchIcon class="w-4 h-4" />
-              </button>
-            </div>
-          </div>
-        </form>
-      </ul>
+          <SearchIcon class="w-5 h-5 text-zinc-700 dark:text-zinc-200" />
+        </button>
+        <div
+          id="dropdownSearch"
+          class="absolute right-0 mt-2 w-64 bg-white dark:bg-zinc-800 rounded-lg shadow-lg p-4 opacity-0 scale-95 transform transition-all duration-200 pointer-events-none"
+        >
+          <form id="navbar-form-search" class="flex">
+            <input
+              type="search"
+              id="navbar-input-search"
+              class="flex-grow p-2 rounded-l-lg border border-zinc-300 focus:ring-pink-500 focus:border-pink-500 dark:bg-zinc-700 dark:border-zinc-600 dark:focus:border-pink-500"
+              placeholder="Cari Anime.."
+              required
+            />
+            <button
+              type="submit"
+              class="px-4 rounded-r-lg bg-pink-600 hover:bg-pink-700 focus:ring-2 focus:ring-pink-300 transition-colors duration-200"
+            >
+              <SearchIcon class="w-4 h-4 text-white" />
+            </button>
+          </form>
+        </div>
+      </div>
+
+      <!-- Theme Toggle -->
+      <button
+        id="button-theme"
+        class="p-2 rounded-full hover:bg-zinc-200 dark:hover:bg-zinc-700 transition-colors duration-200"
+        aria-label="Toggle Theme"
+      >
+        <MoonIcon id="icon-moon" class="w-5 h-5 text-zinc-700 dark:hidden" />
+        <SunIcon id="icon-sun" class="w-5 h-5 text-pink-500 hidden dark:block" />
+      </button>
     </div>
-    <button
-      id="button-theme"
-      type="button"
-      class="inline-flex items-center p-1 w-8 h-8 justify-center text-sm text-zinc-700 rounded-full hover:bg-zinc-200 dark:text-zinc-200 dark:hover:bg-zinc-700"
-    >
-      <MoonIcon id="icon-moon" class="hidden w-4 h-4" />
-      <SunIcon id="icon-sun" class="text-pink-500 hidden w-4 h-4" />
-    </button>
-  </div>
-</nav>
+  </nav>
+</div>
 
 <script>
+  function initTemaDanPencarian() {
+    const searchForm = document.getElementById("navbar-form-search");
+    const searchBtn = document.getElementById("navbar-button-search-main");
+    const dropdown = document.getElementById("dropdownSearch");
 
+    // Toggle dropdown with animation
+    if (searchBtn && dropdown) {
+      searchBtn.addEventListener("click", () => {
+        dropdown.classList.toggle("opacity-0");
+        dropdown.classList.toggle("pointer-events-none");
+        dropdown.classList.toggle("scale-95");
+        dropdown.classList.toggle("scale-100");
+        setTimeout(() => {
+          const input = document.querySelector("#navbar-input-search");
+          input?.focus();
+        }, 150);
+      });
+    }
 
-  // LOGIKA PENCARIAN
-  const searchFormEl = document.getElementById(
-    "navbar-form-search"
-  ) as HTMLFormElement;
-  const mainSearchButtonEl = document.getElementById(
-    "navbar-button-search-main"
-  );
-  let timeouts: NodeJS.Timeout[] = [];
-
-  if (mainSearchButtonEl) {
-    mainSearchButtonEl.addEventListener(
-      "click",
-      function () {
-        timeouts.forEach((timeout) => {
-          clearTimeout(timeout);
-        });
-
-        timeouts = [];
-
-        timeouts.push(
-          setTimeout(() => {
-            const searchInputEl = document.querySelector("input");
-
-            searchInputEl?.focus();
-          }, 100)
-        );
-      },
-      true
-    );
-  }
-
-  if (searchFormEl) {
-    searchFormEl.addEventListener("submit", function (e) {
+    // Submit search
+    searchForm?.addEventListener("submit", (e) => {
       e.preventDefault();
-
-      const inputEl = this.querySelector("input");
-
-      location.href = `/search?q=${inputEl?.value}`;
+      const input = searchForm.querySelector("input");
+      if (input?.value) {
+        window.location.href = `/search?q=${encodeURIComponent(input.value)}`;
+      }
     });
+
+    console.log("Navbar with animation ready!");
   }
+
+  document.addEventListener("DOMContentLoaded", initTemaDanPencarian);
+  document.addEventListener("turbo:load", initTemaDanPencarian);
 </script>
