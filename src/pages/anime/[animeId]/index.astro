@@ -21,6 +21,11 @@ const animeInfo = await animeInfoService({ animeId: animeId! });
 const { data } = animeInfo;
 ---
 
+
+<style>
+ 
+</style>
+
 {() => {
   if (animeInfo.ok) {
     const title = `Anime ${data.title} - ${siteName}`;
@@ -42,7 +47,7 @@ const { data } = animeInfo;
         <Sesepuh>
           <Content>
             {/* Bagian Header Gambar & Judul */}
-            <div class="relative">
+            <div class="relative slide-in-top">
               <img
                 src={data.poster}
                 class="w-full aspect-[16/6] object-cover rounded-t-md"
@@ -51,7 +56,7 @@ const { data } = animeInfo;
               <div class="absolute top-0 right-0 bottom-0 left-0 rounded-t-md bg-gradient-to-t from-zinc-100 dark:from-zinc-900 to-transparent" />
             </div>
 
-            <div class="flex flex-col sm:flex-row justify-center items-center sm:justify-start gap-4 sm:items-end xs:-mt-[100px] sm:-mt-[150px] relative p-4">
+            <div class="flex flex-col sm:flex-row justify-center items-center sm:justify-start gap-4 sm:items-end xs:-mt-[100px] sm:-mt-[150px] relative p-4 slide-in-left delay-1">
               <img
                 src={data.poster}
                 alt={data.title}
@@ -83,9 +88,45 @@ const { data } = animeInfo;
             {/* Grid 2 Kolom: Konten Utama di kiri, Daftar Episode di kanan */}
             <div class="mt-6 grid grid-cols-1 lg:grid-cols-3 gap-6">
               {/* Kolom Kiri: konten utama */}
+                            <aside class="lg:col-span-1 slide-in-right delay-1">
+                <WidgetTitle title="Daftar Episode" />
+                <div class="flex flex-col gap-2 max-h-[600px] overflow-y-auto">
+                  {data.episodeList.map((episode, index) => {
+                    const linkHref = generateUrlPath("/episode", episode.episodeId);
+                    const delayClass = `animate-in delay-${Math.min(3, Math.floor(index/5) + 1)}`;
+                    
+                    if (episode.title) {
+                      return (
+                        <a
+                          href={linkHref}
+                          class={`episode-item flex gap-3 items-center hover:bg-zinc-100 dark:hover:bg-zinc-800 p-2 rounded-md transition ${delayClass}`}
+                        >
+                          <div class="text-white py-1 px-3 bg-sky-700 dark:bg-sky-600 rounded-sm text-sm">
+                            {episode.title}
+                          </div>
+                          <div class="text-sm line-clamp-1">
+                            {data.title} Episode {episode.title}
+                          </div>
+                        </a>
+                      );
+                    }
+                    return (
+                      <a
+                        href={linkHref}
+                        class={`episode-item flex gap-3 items-center hover:bg-zinc-100 dark:hover:bg-zinc-800 p-2 rounded-md transition ${delayClass}`}
+                      >
+                        <div class="py-1 px-3 bg-sky-700 dark:bg-sky-600 rounded-sm text-sm text-white">
+                          {data.type}
+                        </div>
+                        <div class="text-sm">Tonton {data.title}</div>
+                      </a>
+                    );
+                  })}
+                </div>
+              </aside>
               <div class="lg:col-span-2 flex flex-col gap-4">
                 {/* Sinopsis */}
-                <div class="flex flex-col gap-3">
+                <div class="flex flex-col gap-3 animate-in delay-2">
                   {data.synopsis.paragraphs.map((paragraph) => (
                     <p class="text-zinc-600 dark:text-zinc-400">{paragraph}</p>
                   ))}
@@ -102,12 +143,12 @@ const { data } = animeInfo;
                 </div>
 
                 {/* Detail Anime */}
-                <WidgetTitle title="Detail Anime" />
-                <AnimeDetails anime={data} />
+                <WidgetTitle title="Detail Anime" class="animate-in delay-2" />
+                <AnimeDetails anime={data} class="animate-in delay-2" />
 
                 {/* Download Batch (jika ada) */}
                 {data.batch && (
-                  <>
+                  <div class="animate-in delay-2">
                     <WidgetTitle title="Download Batch" />
                     <a
                       href={generateUrlPath("/batch", data.batch.batchId)}
@@ -116,12 +157,12 @@ const { data } = animeInfo;
                     >
                       {data.batch.title.replace(/otakudesu/gi, "").trim()}
                     </a>
-                  </>
+                  </div>
                 )}
 
                 {/* Trailer (jika ada) */}
                 {data.trailer && (
-                  <div class="mt-4">
+                  <div class="mt-4 animate-in delay-3">
                     <iframe
                       src={data.trailer}
                       allowfullscreen
@@ -132,40 +173,7 @@ const { data } = animeInfo;
               </div>
 
               {/* Kolom Kanan: Daftar Episode */}
-              <aside class="lg:col-span-1">
-                <WidgetTitle title="Daftar Episode" />
-                <div class="flex flex-col gap-2 max-h-[600px] overflow-y-auto">
-                  {data.episodeList.map((episode) => {
-                    const linkHref = generateUrlPath("/episode", episode.episodeId);
-                    if (episode.title) {
-                      return (
-                        <a
-                          href={linkHref}
-                          class="flex gap-3 items-center hover:bg-zinc-100 dark:hover:bg-zinc-800 p-2 rounded-md transition"
-                        >
-                          <div class="text-white py-1 px-3 bg-sky-700 dark:bg-sky-600 rounded-sm text-sm">
-                            {episode.title}
-                          </div>
-                          <div class="text-sm line-clamp-1">
-                            {data.title} Episode {episode.title}
-                          </div>
-                        </a>
-                      );
-                    }
-                    return (
-                      <a
-                        href={linkHref}
-                        class="flex gap-3 items-center hover:bg-zinc-100 dark:hover:bg-zinc-800 p-2 rounded-md transition"
-                      >
-                        <div class="py-1 px-3 bg-sky-700 dark:bg-sky-600 rounded-sm text-sm text-white">
-                          {data.type}
-                        </div>
-                        <div class="text-sm">Tonton {data.title}</div>
-                      </a>
-                    );
-                  })}
-                </div>
-              </aside>
+
             </div>
           </Content>
         </Sesepuh>
